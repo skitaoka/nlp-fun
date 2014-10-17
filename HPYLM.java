@@ -310,7 +310,7 @@ final class HPYLM {
   }
 
   ///
-  /// 文章の正規確率を求める.
+  /// 文章の生起確率を求める.
   ///
   double[] probability(String statement) {
     double[] p = new double[statement.length()];
@@ -370,7 +370,7 @@ final class HPYLM {
       "これが人間の飲む煙草というものである事はようやくこの頃知った。",
     };
 
-    // 学習する
+    // 学習 (サンプリング) する
     final HPYLM hpylm = new HPYLM(2, 0.2, 2);
     hpylm.sample(1000, statements);
     hpylm.dump();

@@ -72,7 +72,7 @@ final class HPYLM {
     }
 
     ///
-    /// 文字 c に対応するテーブルの集合を返す (無ければつくって返す)
+    /// 文字 c に対応するテーブルの集合を返す (無ければ作って返す)
     ///
     List<Table> tables(Character c) {
       List<Table> tables = this.tables.get(c);

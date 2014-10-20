@@ -257,7 +257,7 @@ final class HPYLM {
   ///
   /// 客の配置をサンプリングする.
   ///
-  void sample(final int numEpoch, final String[] statements) {
+  void sample(final int numEpoch, final Character[][] statements) {
     Random rnd = new Random();
 
     for (int epoch = 0; epoch < numEpoch; ++ epoch) {
@@ -267,7 +267,7 @@ final class HPYLM {
       shuffle(statements, rnd);
 
       // すべての文について
-      for (String statement : statements) {
+      for (Character[] statement : statements) {
         if (epoch > 0) {
           removeCustomer(statement, rnd);
         }
@@ -281,10 +281,10 @@ final class HPYLM {
   ///
   /// 対応するノードを見つける.
   ///
-  private Restaurant context(final String statement, final int i) {
+  private Restaurant context(final Character[] statement, final int i) {
     Restaurant node = this.root;
     for (int k = 1, length = Math.min(i, degree); k <= length; ++k) {
-      node = node.child(statement.charAt(i-k));
+      node = node.child(statement[i-k]);
     }
     return node;
   }
@@ -292,32 +292,32 @@ final class HPYLM {
   ///
   /// 客を追加する.
   ///
-  private void addCustomer(String statement, Random rnd) {
+  private void addCustomer(Character[] statement, Random rnd) {
     // すべての文字について
-    for (int i = 0, n = statement.length(); i < n; ++i) {
-      context(statement, i).addCustomer(statement.charAt(i), rnd);
+    for (int i = 0, n = statement.length; i < n; ++i) {
+      context(statement, i).addCustomer(statement[i], rnd);
     }
   }
 
   ///
   /// 客を削除する.
   ///
-  private void removeCustomer(String statement, Random rnd) {
+  private void removeCustomer(Character[] statement, Random rnd) {
     // すべての文字について
-    for (int i = 0, n = statement.length(); i < n; ++i) {
-      context(statement, i).removeCustomer(statement.charAt(i), rnd);
+    for (int i = 0, n = statement.length; i < n; ++i) {
+      context(statement, i).removeCustomer(statement[i], rnd);
     }
   }
 
   ///
   /// 文章の生起確率を求める.
   ///
-  double[] probability(String statement) {
-    double[] p = new double[statement.length()];
+  double[] probability(Character[] statement) {
+    double[] p = new double[statement.length];
 
     // すべての文字について
     for (int i = 0, n = p.length; i < n; ++i) {
-      p[i] = context(statement, i).probability(statement.charAt(i));
+      p[i] = context(statement, i).probability(statement[i]);
     }
 
     return p;
@@ -348,9 +348,25 @@ final class HPYLM {
     }
   }
 
+  private static Character[] toCharacters(String statement) {
+    Character[] retval = new Character[statement.length()];
+    for (int i = 0, length = retval.length; i < length; ++i) {
+      retval[i] = statement.charAt(i);
+    }
+    return retval;
+  }
+
+  private static Character[][] toCharacters(String[] statements) {
+    Character[][] retval = new Character[statements.length][];
+    for (int i = 0, size = retval.length; i < size; ++i) {
+      retval[i] = toCharacters(statements[i]);
+    }
+    return retval;
+  }
+
   public static void main(String[] args) throws IOException {
     // 入力文章
-    final String[] statements = {
+    final Character[][] statements = toCharacters(new String[] {
       "吾輩は猫である。",
       "名前はまだ無い。",
       "どこで生れたかとんと見当がつかぬ。",
@@ -368,7 +384,7 @@ final class HPYLM {
       "そうしてその穴の中から時々ぷうぷうと煙を吹く。",
       "どうも咽せぽくて実に弱った。",
       "これが人間の飲む煙草というものである事はようやくこの頃知った。",
-    };
+    });
 
     // 学習 (サンプリング) する
     final HPYLM hpylm = new HPYLM(2, 0.2, 2);
@@ -381,7 +397,7 @@ final class HPYLM {
       while ((line = in.readLine()) != null) {
         line = line.trim();
         if (!line.isEmpty()) {
-          for (double p : hpylm.probability(line)) {
+          for (double p : hpylm.probability(toCharacters(line))) {
             System.out.println(p);
           }
         }

@@ -231,6 +231,8 @@ final class HPYLM {
       }
       assert numTables    ==    tableCount;
       assert numCustomers == customerCount;
+      System.out.printf("%snumTables: %d%n", header, numTables);
+      System.out.printf("%snumCustomers: %d%n", header, numCustomers);
       System.out.printf("%svalidTableCount: %b%n", header, numTables == tableCount);
       System.out.printf("%svalidCustomerCount: %b%n", header, numCustomers == customerCount);
 
@@ -261,7 +263,7 @@ final class HPYLM {
     Random rnd = new Random();
 
     for (int epoch = 0; epoch < numEpoch; ++ epoch) {
-      System.out.printf("epoch: %d%n", epoch);
+      System.err.printf("\repoch: %d%n", epoch);
 
       // statements をシャッフル
       shuffle(statements, rnd);
@@ -276,6 +278,11 @@ final class HPYLM {
 
       // ハイパーパラメータの更新
     }
+
+    // すべて削除されるかチェック
+    //for (Character[] statement : statements) {
+    //  removeCustomer(statement, rnd);
+    //}
   }
 
   ///
@@ -313,12 +320,21 @@ final class HPYLM {
   /// 文章の生起確率を求める.
   ///
   double[] probability(Character[] statement) {
-    double[] p = new double[statement.length];
+    final int length = statement.length;
+
+    double[] p = new double[length+1];
 
     // すべての文字について
-    for (int i = 0, n = p.length; i < n; ++i) {
+    for (int i = 0; i < length; ++i) {
       p[i] = context(statement, i).probability(statement[i]);
     }
+
+    // 最後の要素にパープレキシティを挿入する
+    double ppl = 0;
+    for (int i = 0; i < length; ++i) {
+      ppl += std::log(p[i]);
+    }
+    p[length] = std::exp(-ppl / length);
 
     return p;
   }

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.stream.Stream;
+import java.util.stream.DoubleStream;
 
 import java.lang.ref.WeakReference;
 
@@ -410,15 +410,11 @@ final class HPYLM {
 
     // 標準入力の文の確率を出力する
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-      reader
-        .lines()
-        .map(line -> line.trim())
-        .filter(line -> !line.isEmpty())
-        .forEach(line -> {
-          for (double p : hpylm.probability(toCharacters(line))) {
-            System.out.println(p);
-          }
-        });
+      reader.lines()
+        .map            (line -> line.trim())
+        .filter         (line -> !line.isEmpty())
+        .flatMapToDouble(line -> DoubleStream.of(hpylm.probability(toCharacters(line))))
+        .forEach        (System.out::println);
     }
   }
 }

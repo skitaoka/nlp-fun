@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import java.lang.ref.WeakReference;
 
@@ -332,9 +333,9 @@ final class HPYLM {
     // 最後の要素にパープレキシティを挿入する
     double ppl = 0;
     for (int i = 0; i < length; ++i) {
-      ppl += std::log(p[i]);
+      ppl += Math.log(p[i]);
     }
-    p[length] = std::exp(-ppl / length);
+    p[length] = Math.exp(-ppl / length);
 
     return p;
   }
@@ -408,16 +409,16 @@ final class HPYLM {
     hpylm.dump();
 
     // 標準入力の文の確率を出力する
-    try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
-      String line;
-      while ((line = in.readLine()) != null) {
-        line = line.trim();
-        if (!line.isEmpty()) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+      reader
+        .lines()
+        .map(line -> line.trim())
+        .filter(line -> !line.isEmpty())
+        .forEach(line -> {
           for (double p : hpylm.probability(toCharacters(line))) {
             System.out.println(p);
           }
-        }
-      }
+        });
     }
   }
 }

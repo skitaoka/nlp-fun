@@ -1,5 +1,5 @@
 
-# 棋譜と LDA
+# 棋譜の分類
 
 floodgate にあるコンピュータ将棋同士の棋譜を、潜在的ディリクレ配分法 (LDA; Latent Dirichlet Allocation) にかけて眺めてみた。
 

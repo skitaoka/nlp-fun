@@ -107,7 +107,7 @@ final class LDA {
    * @param beta ハイパーパラメータ
    * @param N サンプルサイズ
    */
-  void influence(final Integer[][] w, final double alpha, final double beta, final int sampleSize) {
+  void inference(final Integer[][] w, final double alpha, final double beta, final int sampleSize) {
     assert(w.length == M);
 
     final Random rnd = new Random();
@@ -334,7 +334,7 @@ final class LDA {
     System.err.printf("sample-size  = %d%n", sampleSize);
 
     LDA lda = new LDA(K, M, V);
-    lda.influence(w, alpha, beta, sampleSize);
+    lda.inference(w, alpha, beta, sampleSize);
     lda.dump();
   }
 }
